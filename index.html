@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0b0b">
+  <title>Forno Nobre Pizzaria - Cardápio Interativo</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#090909;--panel:#131313;--panel2:#191919;--line:#303030;--text:#fff;--muted:#bdbdbd;--accent:#e9902f;--accent2:#ffb45f;--danger:#cf3737;--green:#35c66a}
+    html{scroll-behavior:smooth}
+    body{font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#211306 0,#090909 440px);color:var(--text);line-height:1.45;min-height:100vh}
+    button{font:inherit}
+    .top{position:sticky;top:0;z-index:30;background:rgba(9,9,9,.94);backdrop-filter:blur(12px);border-bottom:1px solid #3c2813}
+    .head{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:center;padding:17px 145px 15px;position:relative}
+    .logo{text-align:center}.logo h1{font-size:30px;letter-spacing:1.4px}.logo h1 span{color:var(--accent)}.logo p{color:var(--accent2);font-weight:800;font-size:13px;letter-spacing:.4px;margin-top:2px}
+    .status{position:absolute;left:18px;display:flex;align-items:center;gap:7px;color:#d9d9d9;font-size:13px;font-weight:700}.status:before{content:'';width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #35c66a99}
+    .cartbtn{position:absolute;right:18px;top:50%;transform:translateY(-50%);border:1.5px solid var(--accent);border-radius:999px;background:#151515;color:#fff;padding:12px 16px;font-weight:900;cursor:pointer}
+    .badge{position:absolute;top:-9px;right:-7px;background:var(--danger);width:24px;height:24px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:12px}.badge.on{display:flex}
+    .tabs{display:flex;justify-content:center;gap:10px;overflow:auto;padding:11px 16px;background:#101010;border-top:1px solid #1d1d1d}.tab{border:1px solid #383838;background:#171717;color:#fff;border-radius:13px;padding:12px 18px;font-weight:900;white-space:nowrap;cursor:pointer}.tab.active{background:var(--accent);color:#121212;border-color:var(--accent)}
+    .hero{max-width:1180px;margin:24px auto 4px;padding:0 18px}.hero-box{border:1px solid #4d3218;background:linear-gradient(135deg,#211408,#111);border-radius:22px;padding:23px;display:flex;justify-content:space-between;align-items:center;gap:20px}.hero h2{font-size:26px;margin-bottom:6px}.hero p{color:#d0d0d0;max-width:720px}.hero-mark{font-size:52px;filter:drop-shadow(0 8px 18px #000)}
+    .wrap{max-width:1180px;margin:auto;padding:18px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+    .card{background:linear-gradient(150deg,#171717,#101010);border:1px solid #2f2f2f;border-radius:19px;overflow:hidden;box-shadow:0 14px 32px #0005;transition:.2s}.card:hover{transform:translateY(-3px);border-color:#59401f}
+    .pic{height:220px;background:#202020;overflow:hidden}.pic img{width:100%;height:100%;object-fit:cover;display:block;transition:.3s}.card:hover .pic img{transform:scale(1.025)}
+    .info{padding:16px}.tag{display:inline-block;background:#9e2d24;color:#fff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:900;margin-bottom:9px;letter-spacing:.4px}.info h3{font-size:21px;margin-bottom:7px}.desc{color:#c7c7c7;font-size:14px;min-height:60px;line-height:1.38}
+    .price-row{display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:10px}.price small{display:block;color:#aaa;font-size:11px;font-weight:700}.price b{color:var(--accent2);font-size:23px}.add{border:1.5px solid var(--accent);background:transparent;color:var(--accent2);border-radius:12px;padding:11px 14px;font-weight:900;cursor:pointer}.add:hover,.finish:hover,.modal-add:hover{filter:brightness(1.12)}
+    .overlay{display:none;position:fixed;inset:0;background:#000c;z-index:50;align-items:center;justify-content:center;padding:16px}.overlay.on{display:flex}.modal{width:min(560px,97vw);max-height:93vh;overflow:auto;background:#121212;border:1px solid #3a3a3a;border-radius:22px;position:relative;box-shadow:0 25px 70px #000}.x{position:absolute;top:10px;right:12px;z-index:2;background:#000b;border:1px solid #555;color:#fff;font-size:24px;width:38px;height:38px;border-radius:50%;cursor:pointer}.modal>img{width:100%;height:260px;object-fit:cover;border-radius:22px 22px 0 0}.modal-body{padding:19px}.modal-body h2{font-size:27px;margin-bottom:5px}.modal-desc{color:#c8c8c8}.modal-price{color:var(--accent2);font-size:25px;font-weight:900;margin-top:10px}.line{height:1px;background:#333;margin:17px 0}.opt-title{font-weight:900;margin-bottom:10px}.opt-sub{color:#aaa;font-size:12px;margin:-5px 0 10px}.pillbox{display:grid;grid-template-columns:1fr 1fr;gap:9px}.pill,.check{border:1px solid #454545;background:#191919;color:#fff;border-radius:11px;padding:12px;cursor:pointer;text-align:left}.pill.active,.check.active{border-color:var(--accent);background:#34210d}.pill b{display:block}.pill small{color:#bdbdbd}.check{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px}.yellow{color:var(--accent2)}
+    .modal-add{width:100%;margin-top:17px;background:var(--accent);color:#111;border:0;border-radius:13px;padding:15px;font-size:16px;font-weight:900;cursor:pointer}
+    .drawer{position:fixed;right:0;top:0;bottom:0;width:min(450px,100vw);background:#101010;z-index:90;transform:translateX(105%);transition:.25s;border-left:1px solid #333;display:flex;flex-direction:column;box-shadow:-15px 0 35px #0009}.drawer.on{transform:translateX(0)}.drawer h2{padding:19px;border-bottom:1px solid #292929}.closecart{position:absolute;right:16px;top:13px;background:transparent;border:0;color:#fff;font-size:29px;cursor:pointer}.cartbody{padding:14px;overflow:auto;flex:1}.empty{color:#bbb;text-align:center;margin-top:40px}.cartitem{display:flex;gap:12px;padding:12px;border:1px solid #2d2d2d;background:#151515;border-radius:14px;margin-bottom:10px}.cartitem img{width:78px;height:78px;border-radius:10px;object-fit:cover}.cartitem .itemtext{flex:1}.cartitem b{display:block}.cartitem small{color:#bbb;display:block;margin-top:4px;line-height:1.4}.qty{display:flex;gap:7px;align-items:center;margin-top:8px;flex-wrap:wrap}.qty button{background:#222;border:1px solid #444;color:#fff;min-width:29px;height:29px;border-radius:7px;cursor:pointer;padding:0 8px}.cartfoot{border-top:1px solid #292929;padding:16px;display:none}.cartfoot.on{display:block}.total{display:flex;justify-content:space-between;font-size:20px;font-weight:900;margin-bottom:12px}.secondary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.secondary button{padding:12px;border-radius:11px;cursor:pointer;font-weight:800}.clear{background:transparent;color:#ddd;border:1px solid #555}.continue{background:#fff;color:#111;border:1px solid #fff}.finish{width:100%;padding:15px;border-radius:12px;border:0;background:var(--accent);color:#111;font-weight:900;font-size:16px;cursor:pointer}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,85px);background:var(--accent);color:#111;border-radius:12px;padding:13px 20px;font-weight:900;transition:.25s;z-index:110}.toast.on{transform:translate(-50%,0)}
+    @media(max-width:900px){.grid{grid-template-columns:1fr 1fr}.status{display:none}.head{padding:16px 80px}.logo h1{font-size:24px}.hero-box{padding:19px}}
+    @media(max-width:590px){.grid{grid-template-columns:1fr}.pic{height:238px}.wrap{padding:12px}.tabs{justify-content:flex-start;padding:10px}.tab{padding:11px 14px}.head{padding:15px 65px 13px}.logo h1{font-size:20px;letter-spacing:.7px}.logo p{font-size:11px}.cartbtn{font-size:0;padding:12px}.cartbtn:before{content:'🛒';font-size:20px}.hero{margin-top:15px;padding:0 12px}.hero h2{font-size:21px}.hero-mark{display:none}.pillbox{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="head">
+      <div class="status">Recebendo pedidos</div>
+      <div class="logo"><h1>🍕 FORNO <span>NOBRE</span></h1><p>PIZZARIA • CARDÁPIO INTERATIVO</p></div>
+      <button class="cartbtn" onclick="openCart()">🛒 Ver carrinho <span id="badge" class="badge">0</span></button>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-box">
+      <div><h2>Pizza artesanal, sabor nobre.</h2><p>Escolha sua pizza, tamanho, segundo sabor e borda. Monte o pedido no carrinho e envie tudo diretamente pelo WhatsApp.</p></div>
+      <div class="hero-mark">🔥🍕</div>
+    </div>
+  </section>
+
+  <main class="wrap"><div class="grid" id="grid"></div></main>
+
+  <div id="modalOverlay" class="overlay" onclick="outsideModal(event)">
+    <div class="modal">
+      <button class="x" onclick="closeModal()">×</button>
+      <img id="mimg" alt="Produto">
+      <div class="modal-body">
+        <span id="mtag" class="tag"></span>
+        <h2 id="mtitle"></h2>
+        <p id="mdesc" class="modal-desc"></p>
+        <div id="mprice" class="modal-price"></div>
+        <div id="optionArea"></div>
+        <button class="modal-add" onclick="addToCart()">🛒 Adicionar ao pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <aside id="cartDrawer" class="drawer">
+    <button class="closecart" onclick="closeCart()">×</button>
+    <h2>Meu pedido</h2>
+    <div class="cartbody" id="cartBody"></div>
+    <div class="cartfoot" id="cartFoot">
+      <div class="total"><span>Total</span><span id="total">R$ 0,00</span></div>
+      <div class="secondary"><button class="clear" onclick="clearCart()">Esvaziar</button><button class="continue" onclick="continueBuy()">Continuar comprando</button></div>
+      <button class="finish" onclick="finishOrder()">Fazer pedido no WhatsApp</button>
+    </div>
+  </aside>
+
+  <div id="toast" class="toast">Adicionado!</div>
+
+  <script>
+    var WPP='5516994451494';
+    var cats=['Tradicionais','Especiais','Combos','Bebidas'];
+    var currentCat='Tradicionais';
+    var current=null,cartItems=[],selectedSize=2,selectedHalf=false,selectedSecond='',selectedBorder=0,selectedOption='';
+
+    var traditionalFlavors=['Calabresa','Mussarela','Marguerita','Portuguesa','Frango com Catupiry','Napolitana'];
+    var specialFlavors=['Quatro Queijos','Bacon Supreme','Carne Seca','Pepperoni','Forno Nobre','Brócolis Especial'];
+    var borders=[
+      {name:'Sem borda recheada',price:0},
+      {name:'Catupiry',price:8},
+      {name:'Cheddar',price:8},
+      {name:'Chocolate',price:10}
+    ];
+
+    var P=[
+      {cat:'Tradicionais',tag:'MAIS PEDIDA',name:'Calabresa',img:'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=82',desc:'Molho artesanal, mussarela, calabresa fatiada, cebola e orégano.',type:'pizza',flavors:traditionalFlavors,prices:[29.90,39.90,49.90,59.90]},
+      {cat:'Tradicionais',tag:'CLÁSSICA',name:'Mussarela',img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=82',desc:'Molho artesanal, generosa camada de mussarela, tomate e orégano.',type:'pizza',flavors:traditionalFlavors,prices:[27.90,37.90,47.90,57.90]},
+      {cat:'Tradicionais',tag:'TRADICIONAL',name:'Portuguesa',img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=82',desc:'Mussarela, presunto, ovo, cebola, ervilha, azeitona e orégano.',type:'pizza',flavors:traditionalFlavors,prices:[31.90,41.90,51.90,61.90]},
+      {cat:'Tradicionais',tag:'CREMOSA',name:'Frango com Catupiry',img:'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=900&q=82',desc:'Frango temperado, mussarela, catupiry, milho e orégano.',type:'pizza',flavors:traditionalFlavors,prices:[32.90,42.90,52.90,62.90]},
+
+      {cat:'Especiais',tag:'PREMIUM',name:'Quatro Queijos',img:'https://images.unsplash.com/photo-1548365328-8b849e6f2e2f?auto=format&fit=crop&w=900&q=82',desc:'Mussarela, provolone, parmesão, gorgonzola e toque de orégano.',type:'pizza',flavors:specialFlavors,prices:[35.90,46.90,57.90,68.90]},
+      {cat:'Especiais',tag:'ESPECIAL',name:'Bacon Supreme',img:'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=900&q=82',desc:'Mussarela, bacon crocante, cheddar, cebola roxa e barbecue.',type:'pizza',flavors:specialFlavors,prices:[36.90,47.90,58.90,69.90]},
+      {cat:'Especiais',tag:'DA CASA',name:'Forno Nobre',img:'https://images.unsplash.com/photo-1594007654729-407eedc4be65?auto=format&fit=crop&w=900&q=82',desc:'Mussarela, pepperoni, bacon, catupiry, tomate confit e manjericão.',type:'pizza',flavors:specialFlavors,prices:[39.90,50.90,61.90,72.90]},
+      {cat:'Especiais',tag:'INTENSA',name:'Pepperoni',img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=900&q=82',desc:'Molho artesanal, mussarela, pepperoni, parmesão e orégano.',type:'pizza',flavors:specialFlavors,prices:[37.90,48.90,59.90,70.90]},
+
+      {cat:'Combos',tag:'COMBO',name:'Combo Pizza + Refri',img:'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=82',desc:'Uma pizza grande tradicional e um refrigerante de 2 litros.',type:'option',price:64.90,options:['Calabresa','Mussarela','Portuguesa','Frango com Catupiry']},
+      {cat:'Combos',tag:'FAMÍLIA',name:'Combo Família',img:'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=900&q=82',desc:'Duas pizzas grandes tradicionais e um refrigerante de 2 litros.',type:'simple',price:109.90},
+      {cat:'Combos',tag:'DOCE + SALGADA',name:'Combo Nobre',img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=82',desc:'Uma pizza grande salgada, uma pizza broto doce e refrigerante.',type:'simple',price:94.90},
+
+      {cat:'Bebidas',tag:'BEBIDA',name:'Refrigerante 2L',img:'https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=900&q=82',desc:'Escolha seu refrigerante gelado para acompanhar o pedido.',type:'option',price:13.90,options:['Coca-Cola','Guaraná Antarctica','Fanta Laranja','Sprite']},
+      {cat:'Bebidas',tag:'BEBIDA',name:'Refrigerante Lata',img:'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?auto=format&fit=crop&w=900&q=82',desc:'Lata gelada de 350 ml.',type:'option',price:6.90,options:['Coca-Cola','Coca-Cola Zero','Guaraná','Fanta Laranja']},
+      {cat:'Bebidas',tag:'BEBIDA',name:'Água Mineral',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=900&q=82',desc:'Água mineral gelada, com ou sem gás.',type:'option',price:4.90,options:['Sem gás','Com gás']}
+    ];
+
+    var tabs=document.getElementById('tabs'),grid=document.getElementById('grid'),badge=document.getElementById('badge'),modalOverlay=document.getElementById('modalOverlay'),mimg=document.getElementById('mimg'),mtag=document.getElementById('mtag'),mtitle=document.getElementById('mtitle'),mdesc=document.getElementById('mdesc'),mprice=document.getElementById('mprice'),optionArea=document.getElementById('optionArea'),cartDrawer=document.getElementById('cartDrawer'),cartBody=document.getElementById('cartBody'),cartFoot=document.getElementById('cartFoot'),toast=document.getElementById('toast');
+
+    function money(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+    function productPrice(p){return p.type==='pizza'?p.prices[0]:p.price}
+    function currentPizzaPrice(){return current.prices[selectedSize]+borders[selectedBorder].price}
+
+    function renderTabs(){tabs.innerHTML=cats.map(function(c){return '<button class="tab '+(c===currentCat?'active':'')+'" onclick="changeCat(\''+c+'\')">'+c+'</button>'}).join('')}
+    function changeCat(c){currentCat=c;renderTabs();renderGrid();window.scrollTo({top:0,behavior:'smooth'})}
+    function renderGrid(){grid.innerHTML=P.filter(function(p){return p.cat===currentCat}).map(function(p){return '<article class="card"><div class="pic"><img src="'+p.img+'" alt="'+p.name+'"></div><div class="info"><span class="tag">'+p.tag+'</span><h3>'+p.name+'</h3><p class="desc">'+p.desc+'</p><div class="price-row"><div class="price">'+(p.type==='pizza'?'<small>A partir de</small>':'')+'<b>'+money(productPrice(p))+'</b></div><button class="add" onclick="openItem(\''+p.name.replace(/'/g,"\\'")+'\')">Adicionar +</button></div></div></article>'}).join('')}
+
+    function openItem(name){
+      current=P.find(function(p){return p.name===name});
+      selectedSize=2;selectedHalf=false;selectedSecond=current.flavors?current.flavors.find(function(f){return f!==current.name}):'';selectedBorder=0;selectedOption=current.options?current.options[0]:'';
+      mimg.src=current.img;mtag.textContent=current.tag;mtitle.textContent=current.name;mdesc.textContent=current.desc;
+      renderOptions();modalOverlay.classList.add('on');
+    }
+
+    function renderOptions(){
+      var html='';
+      if(current.type==='pizza'){
+        var sizes=[{name:'Broto',note:'4 fatias'},{name:'Média',note:'6 fatias'},{name:'Grande',note:'8 fatias'},{name:'Família',note:'12 fatias'}];
+        html+='<div class="line"></div><div class="opt-title">1. Escolha o tamanho</div><div class="pillbox">'+sizes.map(function(s,i){return '<button class="pill '+(selectedSize===i?'active':'')+'" onclick="selectedSize='+i+';renderOptions()"><b>'+s.name+' — '+money(current.prices[i])+'</b><small>'+s.note+'</small></button>'}).join('')+'</div>';
+        html+='<div class="line"></div><div class="opt-title">2. Escolha o sabor</div><div class="pillbox"><button class="pill '+(!selectedHalf?'active':'')+'" onclick="selectedHalf=false;renderOptions()"><b>Sabor inteiro</b><small>'+current.name+'</small></button><button class="pill '+(selectedHalf?'active':'')+'" onclick="selectedHalf=true;renderOptions()"><b>Meio a meio</b><small>Escolha o segundo sabor</small></button></div>';
+        if(selectedHalf){html+='<div class="line"></div><div class="opt-title">Segundo sabor</div><div class="pillbox">'+current.flavors.filter(function(f){return f!==current.name}).map(function(f){return '<button class="pill '+(selectedSecond===f?'active':'')+'" onclick="selectedSecond=\''+f.replace(/'/g,"\\'")+'\';renderOptions()"><b>'+f+'</b></button>'}).join('')+'</div>'}
+        html+='<div class="line"></div><div class="opt-title">3. Escolha a borda</div><div class="opt-sub">O valor da borda é acrescentado ao tamanho selecionado.</div>'+borders.map(function(b,i){return '<button class="check '+(selectedBorder===i?'active':'')+'" onclick="selectedBorder='+i+';renderOptions()"><span>'+b.name+'</span><span class="yellow">'+(b.price?'+ '+money(b.price):'Inclusa')+'</span></button>'}).join('');
+        mprice.textContent=money(currentPizzaPrice());
+      }else if(current.type==='option'){
+        html+='<div class="line"></div><div class="opt-title">Escolha uma opção</div><div class="pillbox">'+current.options.map(function(o){return '<button class="pill '+(selectedOption===o?'active':'')+'" onclick="selectedOption=\''+o.replace(/'/g,"\\'")+'\';renderOptions()"><b>'+o+'</b></button>'}).join('')+'</div>';
+        mprice.textContent=money(current.price);
+      }else{
+        html+='<div class="line"></div><p class="modal-desc">Clique em adicionar para colocar este item no seu pedido.</p>';
+        mprice.textContent=money(current.price);
+      }
+      optionArea.innerHTML=html;
+    }
+
+    function closeModal(){modalOverlay.classList.remove('on')}
+    function outsideModal(e){if(e.target===modalOverlay)closeModal()}
+
+    function addToCart(){
+      var price=current.price,details=[];
+      if(current.type==='pizza'){
+        price=currentPizzaPrice();
+        details.push('Tamanho: '+['Broto','Média','Grande','Família'][selectedSize]);
+        details.push('Sabor: '+(selectedHalf?current.name+' / '+selectedSecond:current.name));
+        details.push('Borda: '+borders[selectedBorder].name);
+      }else if(current.type==='option'){
+        details.push('Opção: '+selectedOption);
+      }
+      cartItems.push({name:current.name,img:current.img,price:price,details:details,qty:1});
+      closeModal();toastMsg('Item adicionado!');openCart();
+    }
+
+    function updateBadge(){var q=cartItems.reduce(function(s,i){return s+i.qty},0);badge.textContent=q;q?badge.classList.add('on'):badge.classList.remove('on')}
+    function openCart(){renderCart();cartDrawer.classList.add('on')}
+    function closeCart(){cartDrawer.classList.remove('on')}
+    function renderCart(){
+      updateBadge();
+      if(!cartItems.length){cartBody.innerHTML='<div class="empty">Seu pedido está vazio.</div>';cartFoot.classList.remove('on');return}
+      cartFoot.classList.add('on');
+      var total=0;
+      cartBody.innerHTML=cartItems.map(function(i,idx){total+=i.price*i.qty;return '<div class="cartitem"><img src="'+i.img+'" alt=""><div class="itemtext"><b>'+i.name+'</b><small>'+i.details.join('<br>')+'</small><div class="qty"><button onclick="qty('+idx+',-1)">−</button><span>'+i.qty+'</span><button onclick="qty('+idx+',1)">+</button><button onclick="removeItem('+idx+')">Remover</button></div><b class="yellow">'+money(i.price*i.qty)+'</b></div></div>'}).join('');
+      document.getElementById('total').textContent=money(total);
+    }
+    function qty(i,d){cartItems[i].qty+=d;if(cartItems[i].qty<=0)cartItems.splice(i,1);renderCart()}
+    function removeItem(i){cartItems.splice(i,1);renderCart()}
+    function clearCart(){cartItems=[];renderCart();toastMsg('Carrinho esvaziado!')}
+    function continueBuy(){closeCart();window.scrollTo({top:0,behavior:'smooth'})}
+
+    function finishOrder(){
+      if(!cartItems.length)return;
+      var lines=cartItems.map(function(i,n){var detail=i.details.length?' | '+i.details.join(' | '):'';return (n+1)+'. '+i.name+' | Qtd: '+i.qty+detail+' | Subtotal: '+money(i.price*i.qty)});
+      var total=cartItems.reduce(function(s,i){return s+i.price*i.qty},0);
+      var msg='Olá! Quero fazer meu pedido na FORNO NOBRE PIZZARIA:\n\n'+lines.join('\n')+'\n\nTotal: '+money(total)+'\n\nNome do cliente:\nEndereço para entrega ou retirada:\nForma de pagamento:';
+      window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');
+    }
+
+    function toastMsg(t){toast.textContent=t;toast.classList.add('on');setTimeout(function(){toast.classList.remove('on')},2100)}
+    renderTabs();renderGrid();updateBadge();
+  </script>
+</body>
+</html>
